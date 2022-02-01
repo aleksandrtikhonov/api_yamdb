@@ -124,7 +124,7 @@ class Genre_Title(models.Model):
 
 class Review(models.Model):
     """
-    Отзывы на произведения
+    Отзыв на произведения
     """
     title_id = models.ForeignKey(
         Title,
@@ -137,12 +137,41 @@ class Review(models.Model):
         on_delete=models.CASCADE,
         related_name='review_author'
     )
+    # Поле для хранения оценки пользователя произведения
     score = models.IntegerField(
         default=5,
         validators=[
             MaxValueValidator(10),
             MinValueValidator(1)
         ],
+    )
+    pub_date = models.DateTimeField(
+        'Дата публикации',
+        auto_now_add=True,
+        db_index=True
+    )
+
+    class Meta:
+        ordering = ['-pub_date']
+
+    def __str__(self):
+        return self.text
+
+
+class Comment(models.Model):
+    """
+    Комментарий к отзыву на произведение
+    """
+    review_id = models.ForeignKey(
+        Review,
+        on_delete=models.CASCADE,
+        related_name='comment'
+    )
+    text = models.TextField()
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='comment_author'
     )
     pub_date = models.DateTimeField(
         'Дата публикации',
