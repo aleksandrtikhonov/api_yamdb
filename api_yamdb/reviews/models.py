@@ -120,3 +120,38 @@ class Genre_Title(models.Model):
 
     def __str__(self):
         return f'{self.title} - {self.genre}'
+
+
+class Review(models.Model):
+    """
+    Отзывы на произведения
+    """
+    title_id = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
+    text = models.TextField()
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='review_author'
+    )
+    score = models.IntegerField(
+        default=5,
+        validators=[
+            MaxValueValidator(10),
+            MinValueValidator(1)
+        ],
+    )
+    pub_date = models.DateTimeField(
+        'Дата публикации',
+        auto_now_add=True,
+        db_index=True
+    )
+
+    class Meta:
+        ordering = ['-pub_date']
+
+    def __str__(self):
+        return self.text
