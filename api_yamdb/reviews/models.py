@@ -34,6 +34,43 @@ def max_value_current_year(value):
     return MaxValueValidator(current_year())(value)
 
 
+class Category(models.Model):
+    """
+    Категория(тип) произведения.
+    Например: фильм, книга, музыка и т.д.
+    """
+    name = models.CharField(
+        verbose_name='Название категории',
+        max_length=50,
+    )
+    slug = models.SlugField(
+        unique=True
+    )
+
+    class Meta:
+        verbose_name_plural = 'Categories'
+
+    def __str__(self):
+        return self.name
+
+
+class Genre(models.Model):
+    """
+    Жанр произведения.
+    Например: фантастика, сай-фай, рок и т.д.
+    """
+    name = models.CharField(
+        verbose_name='Название жанра',
+        max_length=50,
+    )
+    slug = models.SlugField(
+        unique=True
+    )
+
+    def __str__(self):
+        return self.name
+
+
 class Title(models.Model):
     """
     Произведение.
@@ -61,3 +98,25 @@ class Title(models.Model):
     def __str__(self):
         return self.name
 
+
+class Genre_Title(models.Model):
+    """
+    Связка произведение-жанр.
+    """
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        related_name='title'
+    )
+    genre = models.ForeignKey(
+        Genre,
+        on_delete=models.CASCADE,
+        related_name='genre'
+    )
+
+    class Meta:
+        verbose_name = 'Genre-Title'
+        verbose_name_plural = 'Genre-Titles'
+
+    def __str__(self):
+        return f'{self.title} - {self.genre}'

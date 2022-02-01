@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import User, Title
+from .models import User, Title, Category, Genre, Genre_Title
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -28,5 +28,16 @@ class TitleAdmin(admin.ModelAdmin):
     list_filter = ('year', 'category')
 
 
+class CategoryAdmin(admin.ModelAdmin):
+    prepopulated_fields = {'slug': ('name',)}
+
+
+class GenreAdmin(admin.ModelAdmin):
+    prepopulated_fields = {'slug': ('name',)}
+
+
 admin.site.register(User, UserAdmin)
 admin.site.register(Title, TitleAdmin)
+admin.site.register(Category, CategoryAdmin)
+admin.site.register(Genre, GenreAdmin)
+admin.site.register(Genre_Title)
