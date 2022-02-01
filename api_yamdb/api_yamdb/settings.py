@@ -119,3 +119,5 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1)
 }
+
+AUTH_USER_MODEL = 'reviews.User'
