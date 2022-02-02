@@ -22,10 +22,10 @@ class UserAdmin(admin.ModelAdmin):
 class TitleAdmin(admin.ModelAdmin):
     list_display = (
         'pk', 'name',
-        'year', 'category',
+        'year', 'category_id',
     )
-    list_editable = ('category',)
-    list_filter = ('year', 'category')
+    list_editable = ('category_id',)
+    list_filter = ('year', 'category_id')
 
 
 class CategoryAdmin(admin.ModelAdmin):
