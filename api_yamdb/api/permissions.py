@@ -22,3 +22,13 @@ class IsAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
         return (request.user.is_superuser
                 or request.user.role == 'admin')
+
+
+class IsAuthorOrReadOnly(permissions.IsAuthenticatedOrReadOnly):
+    """
+    Доступ на изменение только автору
+    """
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return obj.author == request.user
