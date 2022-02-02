@@ -87,8 +87,8 @@ class Title(models.Model):
             max_value_current_year
         ]
     )
-    category = models.ForeignKey(
-        'Category',
+    category_id = models.ForeignKey(
+        Category,
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
@@ -103,12 +103,12 @@ class Genre_Title(models.Model):
     """
     Связка произведение-жанр.
     """
-    title = models.ForeignKey(
+    title_id = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
         related_name='title'
     )
-    genre = models.ForeignKey(
+    genre_id = models.ForeignKey(
         Genre,
         on_delete=models.CASCADE,
         related_name='genre'
@@ -119,7 +119,9 @@ class Genre_Title(models.Model):
         verbose_name_plural = 'Genre-Titles'
 
     def __str__(self):
-        return f'{self.title} - {self.genre}'
+        title = self.title_id.name
+        genre = self.genre_id.name
+        return f'{title} - {genre}'
 
 
 class Review(models.Model):
