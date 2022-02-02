@@ -1,6 +1,7 @@
 from rest_framework import filters, pagination, permissions, viewsets
 from reviews.models import Category, Genre, Title
-from .viewsets import CreateListRetrieveDeleteViewSet
+from .viewsets import (CreateListRetrieveDeleteViewSet,
+                       CreateUpdateListRetrieveDeleteViewSet)
 from .permissions import IsAdminOrReadOnly
 from .serializers import CategorySerializer, GenreSerializer, TitleSerializer
 
@@ -28,3 +29,13 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     permission_classes = (permissions.AllowAny,)
+
+
+class ReviewViewSet(CreateUpdateListRetrieveDeleteViewSet):
+    """Обработка запросов к отзывам"""
+    pass
+
+
+class CommentViewSet(CreateUpdateListRetrieveDeleteViewSet):
+    """Обработка запросов к комментариям на произведения"""
+    pass
