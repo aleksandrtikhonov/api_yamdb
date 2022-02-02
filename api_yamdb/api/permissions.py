@@ -13,3 +13,12 @@ class IsAdminOrReadOnly(permissions.BasePermission):
             request.method in permissions.SAFE_METHODS
             or request.user.role == 'admin'
         )
+
+
+class IsAdmin(permissions.BasePermission):
+    """
+    Доступ только администратору.
+    """
+    def has_permission(self, request, view):
+        return (request.user.is_superuser
+                or request.user.role == 'admin')
