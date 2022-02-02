@@ -12,6 +12,7 @@ from .viewsets import (CreateListRetrieveDeleteViewSet,
 
 User = get_user_model()
 
+
 class CategoryViewSet(CreateListRetrieveDeleteViewSet):
     """Обработка запросов к категориям."""
     queryset = Category.objects.all()
@@ -51,12 +52,13 @@ class MyTokenObtainPairView(TokenObtainPairView):
     """Обработка запросов токенов."""
     serializer_class = MyTokenObtainPairSerializer
 
+
 class ReviewViewSet(CreateUpdateListRetrieveDeleteViewSet):
     """Обработка запросов к отзывам"""
     serializer_class = ReviewSerializer
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly,
-        IsAdminOrReadOnly,IsAuthorOrReadOnly
+        IsAdminOrReadOnly, IsAuthorOrReadOnly
     )
 
     def get_queryset(self, **kwargs):
@@ -98,4 +100,3 @@ class CommentViewSet(CreateUpdateListRetrieveDeleteViewSet):
             author=self.request.user,
             review_id=self.kwargs.get('review_id',)
         )
-
