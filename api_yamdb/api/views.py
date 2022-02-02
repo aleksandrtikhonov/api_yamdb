@@ -1,23 +1,30 @@
-from django.shortcuts import get_object_or_404
 from rest_framework import filters, pagination, permissions, viewsets
+from reviews.models import Category, Genre, Title
+from .viewsets import CreateListRetrieveDeleteViewSet
+from .permissions import IsAdminOrReadOnly
+from .serializers import CategorySerializer, GenreSerializer, TitleSerializer
 
-from reviews.models import Category, Genre
-from .serializers import CategorySerializer, GenreSerializer
 
-
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(CreateListRetrieveDeleteViewSet):
     """Обработка запросов к категориям."""
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(CreateListRetrieveDeleteViewSet):
     """Обработка запросов к жанрам."""
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
+
+
+class TitleViewSet(viewsets.ModelViewSet):
+    """Обработка запросов к произведениям."""
+    queryset = Title.objects.all()
+    serializer_class = TitleSerializer
+    permission_classes = (permissions.AllowAny,)
