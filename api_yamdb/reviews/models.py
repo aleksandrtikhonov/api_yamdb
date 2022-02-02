@@ -6,7 +6,10 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class User(AbstractUser):
-
+    """
+    Новая модель пользователя.
+    Добавлены роли и графа О себе.
+    """
     USER_ROLES = [
         ('user', 'Аутентифицированный пользователь'),
         ('moderator', 'Модератор'),
@@ -15,8 +18,9 @@ class User(AbstractUser):
     role = models.CharField(
         max_length=9,
         choices=USER_ROLES,
+        default='user',
     )
-    bio = models.TextField()
+    bio = models.TextField('О себе')
 
 
 def current_year():
