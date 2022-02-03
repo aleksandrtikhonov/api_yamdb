@@ -22,10 +22,19 @@ class UserAdmin(admin.ModelAdmin):
 class TitleAdmin(admin.ModelAdmin):
     list_display = (
         'pk', 'name',
-        'year', 'category_id',
+        'year', 'category',
+        'genres_names',
+        'description'
     )
-    list_editable = ('category_id',)
-    list_filter = ('year', 'category_id')
+    list_editable = ('category',)
+    list_filter = ('year', 'category')
+
+    def genres_names(self, obj):
+        return (', '.join([
+            genre.name for genre in obj.genre.all()
+        ]))
+
+    genres_names.short_description = 'Genre'
 
 
 class CategoryAdmin(admin.ModelAdmin):

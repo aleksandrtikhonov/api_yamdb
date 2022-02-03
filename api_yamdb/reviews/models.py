@@ -87,17 +87,21 @@ class Title(models.Model):
     year = models.PositiveIntegerField(
         verbose_name='Год выхода',
         validators=[
-            MinValueValidator(1000),
             max_value_current_year
         ]
     )
-    category_id = models.ForeignKey(
+    category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
         related_name='title'
     )
+    genre = models.ManyToManyField(
+        Genre,
+        through='Genre_Title'
+    )
+    description = models.TextField(blank=True)
 
     def __str__(self):
         return self.name
@@ -107,24 +111,20 @@ class Genre_Title(models.Model):
     """
     Связка произведение-жанр.
     """
-    title_id = models.ForeignKey(
+    title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
         related_name='title'
     )
-    genre_id = models.ForeignKey(
+    genre = models.ForeignKey(
         Genre,
         on_delete=models.CASCADE,
         related_name='genre'
     )
 
-    class Meta:
-        verbose_name = 'Genre-Title'
-        verbose_name_plural = 'Genre-Titles'
-
     def __str__(self):
-        title = self.title_id.name
-        genre = self.genre_id.name
+        title = self.title.name
+        genre = self.genre.name
         return f'{title} - {genre}'
 
 
