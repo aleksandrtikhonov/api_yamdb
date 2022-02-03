@@ -12,6 +12,17 @@ class CreateListRetrieveDeleteViewSet(
     pass
 
 
+class CreateListDeleteViewSet(
+    mixins.CreateModelMixin, mixins.ListModelMixin,
+    mixins.RetrieveModelMixin, mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
+    """
+    Вьюсет, исключающий PUT/PATCH запросы,
+    DETAIL просмотр запрещен.
+    """
+    pass
+
 class CreateUpdateListRetrieveDeleteViewSet(
     CreateListRetrieveDeleteViewSet, mixins.UpdateModelMixin
 ):

@@ -8,25 +8,28 @@ from .serializers import (CategorySerializer, GenreSerializer,
                           MyTokenObtainPairSerializer, TitleSerializer,
                           UserSerializer, ReviewSerializer, CommentSerializer)
 from .viewsets import (CreateListRetrieveDeleteViewSet,
-                       CreateUpdateListRetrieveDeleteViewSet)
+                       CreateUpdateListRetrieveDeleteViewSet,
+                       CreateListDeleteViewSet)
 
 User = get_user_model()
 
 
-class CategoryViewSet(CreateListRetrieveDeleteViewSet):
+class CategoryViewSet(CreateListDeleteViewSet):
     """Обработка запросов к категориям."""
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = (IsAdminOrReadOnly,)
+    #permission_classes = (IsAdminOrReadOnly,)
+    permission_classes = (permissions.AllowAny,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
 
 
-class GenreViewSet(CreateListRetrieveDeleteViewSet):
+class GenreViewSet(CreateListDeleteViewSet):
     """Обработка запросов к жанрам."""
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (IsAdminOrReadOnly,)
+    #permission_classes = (IsAdminOrReadOnly,)
+    permission_classes = (permissions.AllowAny)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
 
@@ -35,7 +38,36 @@ class TitleViewSet(viewsets.ModelViewSet):
     """Обработка запросов к произведениям."""
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
+    #permission_classes = (IsAdminOrReadOnly,)
     permission_classes = (permissions.AllowAny,)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class UserList(generics.ListCreateAPIView):

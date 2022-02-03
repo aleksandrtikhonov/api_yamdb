@@ -1,9 +1,9 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from rest_framework.relations import SlugRelatedField
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework.validators import UniqueValidator
 
-from reviews.models import Category, Genre, Title, Review, Comment
+from reviews.models import Category, Genre, Title, Genre_Title, Review, Comment
 
 User = get_user_model()
 
@@ -12,6 +12,14 @@ class CategorySerializer(serializers.ModelSerializer):
     """
     Обслуживает модель 'Category'.
     """
+    slug = serializers.SlugField(
+        max_length=100,
+        validators=[UniqueValidator(
+            queryset=Category.objects.all(),
+            message='Такая категория уже существует.'
+        )]
+    )
+
     class Meta:
         model = Category
         fields = '__all__'
@@ -21,6 +29,14 @@ class GenreSerializer(serializers.ModelSerializer):
     """
     Обслуживает модель 'Genre'.
     """
+    slug = serializers.SlugField(
+        max_length=100,
+        validators=[UniqueValidator(
+            queryset=Genre.objects.all(),
+            message='Такой жанр уже существует.'
+        )]
+    )
+
     class Meta:
         model = Genre
         fields = '__all__'
@@ -30,10 +46,14 @@ class TitleSerializer(serializers.ModelSerializer):
     """
     Обслуживает модель 'Title'.
     """
-    category = serializers.StringRelatedField(
-        source='category_id',
-        required=False,
-        read_only=True,
+    category = serializers.SlugRelatedField(
+        queryset=Category.objects.all(),
+        slug_field='slug'
+    )
+    genre = serializers.SlugRelatedField(
+        queryset=Genre.objects.all(),
+        slug_field='slug',
+        many=True
     )
 
     class Meta:
@@ -41,7 +61,7 @@ class TitleSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'name',
             'year', 'category',
-            'category_id'
+            'genre',
         )
 
 
