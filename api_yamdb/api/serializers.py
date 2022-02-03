@@ -1,6 +1,8 @@
 import datetime as dt
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
@@ -76,7 +78,24 @@ class TitleSerializer(serializers.ModelSerializer):
         ]
 
 
+class SignUpSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'email')
+
+    def validate_username(self, value):
+        if value == 'me':
+            raise serializers.ValidationError('Измените username!')
+        return value
+
+
 class UserSerializer(serializers.ModelSerializer):
+    """
+    Обслуживает модель 'User'.
+    """
+    username = serializers.CharField(max_length=150, allow_blank=False)
+    email = serializers.EmailField(max_length=254, allow_blank=False)
+
     class Meta:
         fields = (
             'username', 'email', 'first_name',
@@ -86,15 +105,16 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-
-        # Add custom claims
-        # token['name'] = user.name
-        # ...
-
-        return token
+    """
+    Новый сериалайзер для получения токена.
+    """
+    def validate(self, data):
+        user = get_object_or_404(User, username=data['username'])
+        if default_token_generator.check_token(user,
+                                               data['confirmation_code']):
+            raise serializers.ValidationError(
+                'Неверный код подтверждения!')
+        return data
 
 
 class ReviewSerializer(serializers.ModelSerializer):
