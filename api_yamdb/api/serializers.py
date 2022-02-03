@@ -48,9 +48,12 @@ class TitleSerializer(serializers.ModelSerializer):
 
 
 class SignUpSerializer(serializers.ModelSerializer):
+    """
+    Создает пользователей через API.
+    """
     class Meta:
         model = User
-        fields = ('username', 'email')
+        fields = ('email', 'username')
 
     def validate_username(self, value):
         if value == 'me':
@@ -77,12 +80,22 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     """
     Новый сериалайзер для получения токена.
     """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields[self.username_field] = serializers.CharField()
+        del self.fields['password']
+        self.fields['confirmation_code'] = serializers.CharField()
+
     def validate(self, data):
         user = get_object_or_404(User, username=data['username'])
         if default_token_generator.check_token(user,
                                                data['confirmation_code']):
             raise serializers.ValidationError(
                 'Неверный код подтверждения!')
+
+        refresh = self.get_token(user)
+        data['token'] = str(refresh.access_token)
+
         return data
 
 

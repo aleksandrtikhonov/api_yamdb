@@ -20,7 +20,7 @@ class User(AbstractUser):
         choices=USER_ROLES,
         default='user',
     )
-    bio = models.TextField('О себе')
+    bio = models.TextField('О себе', blank=True)
 
 
 def current_year():
