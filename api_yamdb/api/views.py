@@ -1,8 +1,10 @@
 from django.contrib.auth import get_user_model
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, generics, pagination, permissions, viewsets
 from rest_framework_simplejwt.views import TokenObtainPairView
 from reviews.models import Category, Genre, Review, Title
 from django.shortcuts import get_object_or_404
+from .filters import TitleFilter
 from .permissions import IsAdmin, IsAdminOrReadOnly, IsAuthorOrReadOnly
 from .serializers import (CategorySerializer, GenreSerializer,
                           MyTokenObtainPairSerializer, TitleSerializer,
@@ -41,6 +43,8 @@ class TitleViewSet(viewsets.ModelViewSet):
     serializer_class = TitleSerializer
     #permission_classes = (IsAdminOrReadOnly,)
     permission_classes = (permissions.AllowAny,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitleFilter
 
 
 class UserList(generics.ListCreateAPIView):
