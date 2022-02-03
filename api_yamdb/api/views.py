@@ -97,6 +97,7 @@ class UserSelfDetail(generics.RetrieveUpdateAPIView):
 class MyTokenObtainPairView(TokenObtainPairView):
     """Обработка запросов токенов."""
     serializer_class = MyTokenObtainPairSerializer
+    permission_classes = (permissions.AllowAny,)
 
 
 @api_view(['POST', ])
