@@ -82,6 +82,9 @@ class SignUpSerializer(serializers.ModelSerializer):
     """
     Создает пользователей через API.
     """
+    username = serializers.CharField(max_length=150, allow_blank=False)
+    email = serializers.EmailField(max_length=254, allow_blank=False)
+
     class Meta:
         model = User
         fields = ('email', 'username')

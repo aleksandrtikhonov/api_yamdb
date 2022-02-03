@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from rest_framework import (filters, generics, pagination,
                             permissions, status, viewsets)
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from reviews.models import Category, Genre, Review, Title
@@ -96,6 +96,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 
 @api_view(['POST', ])
+@permission_classes((permissions.AllowAny, ))
 def send_token(request):
     """
     Отправка кода подтверждения по почте.
