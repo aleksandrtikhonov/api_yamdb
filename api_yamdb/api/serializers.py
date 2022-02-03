@@ -1,9 +1,10 @@
+import datetime as dt
+
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework.validators import UniqueValidator
-
-from reviews.models import Category, Genre, Title, Genre_Title, Review, Comment
+from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
+from reviews.models import Category, Genre, Title, Review, Comment
 
 User = get_user_model()
 
@@ -56,13 +57,23 @@ class TitleSerializer(serializers.ModelSerializer):
         many=True
     )
 
+    def validate_year(self, value):
+        current_year = dt.date.today().year
+        if 0 < value < current_year:
+            return value
+        raise serializers.ValidationError(
+            'Проверьте год выхода'
+        )
+
     class Meta:
         model = Title
-        fields = (
-            'id', 'name',
-            'year', 'category',
-            'genre',
-        )
+        fields = '__all__'
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Title.objects.all(),
+                fields=('name', 'year', 'category')
+            )
+        ]
 
 
 class UserSerializer(serializers.ModelSerializer):

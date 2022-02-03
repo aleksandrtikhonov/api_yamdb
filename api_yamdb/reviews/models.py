@@ -87,7 +87,6 @@ class Title(models.Model):
     year = models.PositiveIntegerField(
         verbose_name='Год выхода',
         validators=[
-            MinValueValidator(1000),
             max_value_current_year
         ]
     )
@@ -122,10 +121,6 @@ class Genre_Title(models.Model):
         on_delete=models.CASCADE,
         related_name='genre'
     )
-
-    class Meta:
-        verbose_name = 'Genre-Title'
-        verbose_name_plural = 'Genre-Titles'
 
     def __str__(self):
         title = self.title.name

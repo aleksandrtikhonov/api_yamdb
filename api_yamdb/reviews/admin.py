@@ -24,6 +24,7 @@ class TitleAdmin(admin.ModelAdmin):
         'pk', 'name',
         'year', 'category',
         'genres_names',
+        'description'
     )
     list_editable = ('category',)
     list_filter = ('year', 'category')

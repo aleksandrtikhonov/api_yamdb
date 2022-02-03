@@ -42,34 +42,6 @@ class TitleViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.AllowAny,)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class UserList(generics.ListCreateAPIView):
     """Обработка запросов к пользователям."""
     queryset = User.objects.all()
