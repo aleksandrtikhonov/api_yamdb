@@ -7,8 +7,7 @@ from .permissions import IsAdmin, IsAdminOrReadOnly, IsAuthorOrReadOnly
 from .serializers import (CategorySerializer, GenreSerializer,
                           MyTokenObtainPairSerializer, TitleSerializer,
                           UserSerializer, ReviewSerializer, CommentSerializer)
-from .viewsets import (CreateListRetrieveDeleteViewSet,
-                       CreateUpdateListRetrieveDeleteViewSet,
+from .viewsets import (CreateUpdateListRetrieveDeleteViewSet,
                        CreateListDeleteViewSet)
 
 User = get_user_model()
@@ -20,6 +19,7 @@ class CategoryViewSet(CreateListDeleteViewSet):
     serializer_class = CategorySerializer
     #permission_classes = (IsAdminOrReadOnly,)
     permission_classes = (permissions.AllowAny,)
+    lookup_field = 'slug'
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
 
@@ -29,7 +29,8 @@ class GenreViewSet(CreateListDeleteViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     #permission_classes = (IsAdminOrReadOnly,)
-    permission_classes = (permissions.AllowAny)
+    permission_classes = (permissions.AllowAny,)
+    lookup_field = 'slug'
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
 
