@@ -23,9 +23,17 @@ class TitleAdmin(admin.ModelAdmin):
     list_display = (
         'pk', 'name',
         'year', 'category_id',
+        'genres_names',
     )
     list_editable = ('category_id',)
     list_filter = ('year', 'category_id')
+
+    def genres_names(self, obj):
+        return (', '.join([
+            genre.name for genre in obj.genre_id.all()
+        ]))
+
+    genres_names.short_description = 'Genre'
 
 
 class CategoryAdmin(admin.ModelAdmin):
