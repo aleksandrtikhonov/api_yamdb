@@ -91,14 +91,14 @@ class Title(models.Model):
             max_value_current_year
         ]
     )
-    category_id = models.ForeignKey(
+    category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
         related_name='title'
     )
-    genre_id = models.ManyToManyField(
+    genre = models.ManyToManyField(
         Genre,
         through='Genre_Title'
     )
@@ -112,12 +112,12 @@ class Genre_Title(models.Model):
     """
     Связка произведение-жанр.
     """
-    title_id = models.ForeignKey(
+    title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
         related_name='title'
     )
-    genre_id = models.ForeignKey(
+    genre = models.ForeignKey(
         Genre,
         on_delete=models.CASCADE,
         related_name='genre'
@@ -128,8 +128,8 @@ class Genre_Title(models.Model):
         verbose_name_plural = 'Genre-Titles'
 
     def __str__(self):
-        title = self.title_id.name
-        genre = self.genre_id.name
+        title = self.title.name
+        genre = self.genre.name
         return f'{title} - {genre}'
 
 
