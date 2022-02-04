@@ -1,4 +1,6 @@
+from asyncio.windows_events import NULL
 from django.core.mail import send_mail
+from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, generics, pagination, permissions, viewsets
@@ -90,8 +92,14 @@ class UserSelfDetail(generics.RetrieveUpdateAPIView):
 
     def perform_update(self, serializer):
         user_role = self.request.user.role
-        if user_role == 'user':
-            serializer.save(role=user_role)
+        request_role = serializer.validated_data.get('role')
+        if (user_role == 'user'
+                and request_role is not NULL
+                and request_role != user_role):
+            serializer.validated_data['role'] = 'user'
+        # if user_role == 'user':
+        #     serializer.save(role=user_role)
+        serializer.save()
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -109,8 +117,9 @@ def send_token(request):
     if request.method == 'POST':
         serializer = SignUpSerializer(data=request.data)
         if serializer.is_valid():
-            # Отправим письмо с токеном
+            # Создадим пользователя
             serializer.save()
+            # Отправим письмо с кодом подтверждения
             user = get_object_or_404(User,
                                      username=serializer.data['username'])
             confirmation_code = default_token_generator.make_token(user)

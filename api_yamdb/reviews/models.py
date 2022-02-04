@@ -10,7 +10,6 @@ class User(AbstractUser):
     Новая модель пользователя.
     Добавлены роли и графа О себе.
     """
-    email = models.EmailField(max_length=255, unique=True)
     USER_ROLES = [
         ('user', 'Аутентифицированный пользователь'),
         ('moderator', 'Модератор'),

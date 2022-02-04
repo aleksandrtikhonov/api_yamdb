@@ -82,8 +82,16 @@ class SignUpSerializer(serializers.ModelSerializer):
     """
     Создает пользователей через API.
     """
-    username = serializers.CharField(max_length=150, allow_blank=False)
-    email = serializers.EmailField(max_length=254, allow_blank=False)
+    username = serializers.CharField(
+        max_length=150,
+        allow_blank=False,
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
+    email = serializers.EmailField(
+        max_length=254,
+        allow_blank=False,
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
 
     class Meta:
         model = User
@@ -99,8 +107,16 @@ class UserSerializer(serializers.ModelSerializer):
     """
     Обслуживает модель 'User'.
     """
-    username = serializers.CharField(max_length=150, allow_blank=False)
-    email = serializers.EmailField(max_length=254, allow_blank=False)
+    username = serializers.CharField(
+        max_length=150,
+        allow_blank=False,
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
+    email = serializers.EmailField(
+        max_length=254,
+        allow_blank=False,
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
 
     class Meta:
         fields = (
@@ -117,13 +133,13 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields[self.username_field] = serializers.CharField()
-        del self.fields['password']
         self.fields['confirmation_code'] = serializers.CharField()
+        del self.fields['password']
 
     def validate(self, data):
         user = get_object_or_404(User, username=data['username'])
-        if default_token_generator.check_token(user,
-                                               data['confirmation_code']):
+        if not default_token_generator.check_token(user,
+                                                   data['confirmation_code']):
             raise serializers.ValidationError(
                 'Неверный код подтверждения!')
 
