@@ -1,7 +1,6 @@
 from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, generics, pagination, permissions, viewsets
 from django.contrib.auth.tokens import default_token_generator
 from rest_framework import (filters, generics, pagination,
                             permissions, status, viewsets)
@@ -31,6 +30,7 @@ class CategoryViewSet(CreateListDeleteViewSet):
     lookup_field = 'slug'
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
+    pagination_class = pagination.PageNumberPagination
 
 
 class GenreViewSet(CreateListDeleteViewSet):
@@ -42,6 +42,7 @@ class GenreViewSet(CreateListDeleteViewSet):
     lookup_field = 'slug'
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
+    pagination_class = pagination.PageNumberPagination
 
 
 class TitleViewSet(viewsets.ModelViewSet):
@@ -52,6 +53,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.AllowAny,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
+    pagination_class = pagination.PageNumberPagination
 
 
 class UserList(generics.ListCreateAPIView):
