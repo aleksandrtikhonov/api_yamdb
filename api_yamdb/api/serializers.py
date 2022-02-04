@@ -83,12 +83,10 @@ class SignUpSerializer(serializers.ModelSerializer):
     Создает пользователей через API.
     """
     username = serializers.CharField(
-        max_length=150,
         allow_blank=False,
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
     email = serializers.EmailField(
-        max_length=254,
         allow_blank=False,
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
@@ -108,12 +106,10 @@ class UserSerializer(serializers.ModelSerializer):
     Обслуживает модель 'User'.
     """
     username = serializers.CharField(
-        max_length=150,
         allow_blank=False,
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
     email = serializers.EmailField(
-        max_length=254,
         allow_blank=False,
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
@@ -134,17 +130,17 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         super().__init__(*args, **kwargs)
         self.fields[self.username_field] = serializers.CharField()
         self.fields['confirmation_code'] = serializers.CharField()
-        del self.fields['password']
+        del self.fields['password']  # Вместо пароля confirmation_code
 
-    def validate(self, data):
-        user = get_object_or_404(User, username=data['username'])
+    def validate(self, attrs):
+        user = get_object_or_404(User, username=attrs['username'])
         if not default_token_generator.check_token(user,
-                                                   data['confirmation_code']):
+                                                   attrs['confirmation_code']):
             raise serializers.ValidationError(
                 'Неверный код подтверждения!')
 
         refresh = self.get_token(user)
-        data['token'] = str(refresh.access_token)
+        data = {'token': str(refresh.access_token), }
 
         return data
 

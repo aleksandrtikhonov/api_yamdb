@@ -1,6 +1,5 @@
 from asyncio.windows_events import NULL
 from django.core.mail import send_mail
-from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, generics, pagination, permissions, viewsets
@@ -97,8 +96,6 @@ class UserSelfDetail(generics.RetrieveUpdateAPIView):
                 and request_role is not NULL
                 and request_role != user_role):
             serializer.validated_data['role'] = 'user'
-        # if user_role == 'user':
-        #     serializer.save(role=user_role)
         serializer.save()
 
 
