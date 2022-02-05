@@ -133,7 +133,7 @@ class Review(models.Model):
     """
     Отзыв на произведения
     """
-    title_id = models.ForeignKey(
+    title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
         related_name='reviews'
@@ -169,7 +169,7 @@ class Comment(models.Model):
     """
     Комментарий к отзыву на произведение
     """
-    review_id = models.ForeignKey(
+    review = models.ForeignKey(
         Review,
         on_delete=models.CASCADE,
         related_name='comment'
