@@ -160,6 +160,11 @@ class Review(models.Model):
     class Meta:
         ordering = ['-pub_date']
 
+        constraints = [
+            models.UniqueConstraint(fields=['title', 'author'],
+                                    name='unique_review')
+        ]
+
     def __str__(self):
         return self.text
 
@@ -171,7 +176,8 @@ class Comment(models.Model):
     review = models.ForeignKey(
         Review,
         on_delete=models.CASCADE,
-        related_name='comment'
+        related_name='comment',
+        db_constraint=False
     )
     text = models.TextField()
     author = models.ForeignKey(
