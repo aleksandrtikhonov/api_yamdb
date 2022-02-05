@@ -61,7 +61,7 @@ class ReviewAdmin(admin.ModelAdmin):
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = (
-        'review_id',
+        'pk',
         'text',
         'author',
         'pub_date',

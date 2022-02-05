@@ -136,7 +136,7 @@ class ReviewViewSet(CreateUpdateListRetrieveDeleteViewSet):
     serializer_class = ReviewSerializer
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly,
-        IsAdminOrReadOnly, IsAuthorOrReadOnly
+        # IsAdminOrReadOnly, IsAuthorOrReadOnly
     )
 
     def get_queryset(self, **kwargs):
