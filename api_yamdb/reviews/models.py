@@ -10,7 +10,6 @@ class User(AbstractUser):
     Новая модель пользователя.
     Добавлены роли и графа О себе.
     """
-    email = models.EmailField(max_length=255, unique=True)
     USER_ROLES = [
         ('user', 'Аутентифицированный пользователь'),
         ('moderator', 'Модератор'),
@@ -133,7 +132,7 @@ class Review(models.Model):
     """
     Отзыв на произведения
     """
-    title_id = models.ForeignKey(
+    title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
         related_name='reviews'
@@ -169,7 +168,7 @@ class Comment(models.Model):
     """
     Комментарий к отзыву на произведение
     """
-    review_id = models.ForeignKey(
+    review = models.ForeignKey(
         Review,
         on_delete=models.CASCADE,
         related_name='comment'
