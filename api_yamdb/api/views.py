@@ -1,4 +1,4 @@
-from asyncio.windows_events import NULL
+# from asyncio.windows_events import NULL
 from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
 from django_filters.rest_framework import DjangoFilterBackend
@@ -136,8 +136,9 @@ class ReviewViewSet(CreateUpdateListRetrieveDeleteViewSet):
     serializer_class = ReviewSerializer
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly,
-        # IsAdminOrReadOnly, IsAuthorOrReadOnly
+        IsAuthorOrReadOnly
     )
+    pagination_class = pagination.PageNumberPagination
 
     def get_queryset(self, **kwargs):
         title = get_object_or_404(
@@ -162,8 +163,9 @@ class CommentViewSet(CreateUpdateListRetrieveDeleteViewSet):
     serializer_class = CommentSerializer
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly,
-        IsAdminOrReadOnly, IsAuthorOrReadOnly
+        IsAuthorOrReadOnly
     )
+    pagination_class = pagination.PageNumberPagination
 
     def get_queryset(self, **kwargs):
         review = get_object_or_404(

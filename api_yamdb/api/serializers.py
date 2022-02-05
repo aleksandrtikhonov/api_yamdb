@@ -157,7 +157,19 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = '__all__'
+        fields = ('id', 'text', 'author', 'score', 'pub_date',)
+
+    def validate(self, data):
+        author = self.context.get('request').user
+        title_id = get_object_or_404(
+            Title,
+            id=self.context.get('view').kwargs.get('title_id')
+        )
+        if (self.context.get('request').method == 'POST'
+            and Review.objects.filter(title_id=title_id,
+                                      author_id=author.id).exists()):
+            raise serializers.ValidationError('fdfasfsaf')
+        return data
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -172,4 +184,12 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = '__all__'
+        fields = ('id', 'text', 'author', 'pub_date',)
+
+    def validate(self, data):
+        get_object_or_404(
+            Review,
+            id=self.context.get('view').kwargs.get('review_id'),
+            title_id=self.context.get('view').kwargs.get('title_id')
+        )
+        return data
