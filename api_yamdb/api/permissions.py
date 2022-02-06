@@ -1,18 +1,44 @@
 from rest_framework import permissions
 
 
-class IsAdminOrReadOnly(permissions.BasePermission):
+class TitlePermission(permissions.BasePermission):
     """
-    POST/DELETE запросы доступны только администратору.
+    Кастмоный пермишен для Title.
     """
     def has_permission(self, request, view):
-        #print(request.user.role)
-        return request.method in permissions.SAFE_METHODS
+        if request.user.is_anonymous:
+            return request.method in permissions.SAFE_METHODS
+        return (
+            request.user.is_superuser
+            or request.user.role == 'admin'
+        )
 
     def has_object_permission(self, request, view, obj):
-        #print(request.user.role)
+        if request.method == 'PUT':
+            return False
+        if request.user.is_anonymous:
+            return request.method in permissions.SAFE_METHODS
         return (
-            request.method in permissions.SAFE_METHODS
+            request.user.is_superuser
+            or request.user.role == 'admin'
+        )
+
+
+class IsAdminOrReadOnly(permissions.BasePermission):
+    """
+    POST/DELETE запросы доступны только администратору либо суперюзеру.
+    """
+    def has_permission(self, request, view):
+        if request.user.is_anonymous:
+            return request.method in permissions.SAFE_METHODS
+        return (
+            request.user.is_superuser
+            or request.user.role == 'admin'
+        )
+
+    def has_object_permission(self, request, view, obj):
+        return (
+            request.user.is_superuser
             or request.user.role == 'admin'
         )
 
@@ -30,7 +56,7 @@ class IsAdmin(permissions.BasePermission):
 
 class IsAuthorOrReadOnly(permissions.IsAuthenticatedOrReadOnly):
     """
-    Доступ на изменение только автору
+    Доступ на изменение только автору.
     """
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:

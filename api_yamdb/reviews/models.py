@@ -45,14 +45,16 @@ class Category(models.Model):
     """
     name = models.CharField(
         verbose_name='Название категории',
-        max_length=50,
+        max_length=256,
     )
     slug = models.SlugField(
-        unique=True
+        unique=True,
+        max_length=50
     )
 
     class Meta:
         verbose_name_plural = 'Categories'
+        ordering = ['-id']
 
     def __str__(self):
         return self.name
@@ -65,11 +67,15 @@ class Genre(models.Model):
     """
     name = models.CharField(
         verbose_name='Название жанра',
-        max_length=50,
+        max_length=256
     )
     slug = models.SlugField(
-        unique=True
+        unique=True,
+        max_length=50
     )
+
+    class Meta:
+        ordering = ['-id']
 
     def __str__(self):
         return self.name
@@ -82,7 +88,7 @@ class Title(models.Model):
     """
     name = models.CharField(
         verbose_name='Название произведения',
-        max_length=50,
+        max_length=256,
     )
     year = models.PositiveIntegerField(
         verbose_name='Год выхода',
@@ -103,6 +109,9 @@ class Title(models.Model):
     )
     description = models.TextField(blank=True)
 
+    class Meta:
+        ordering = ['-id']
+
     def __str__(self):
         return self.name
 
@@ -121,6 +130,9 @@ class Genre_Title(models.Model):
         on_delete=models.CASCADE,
         related_name='genre'
     )
+
+    class Meta:
+        ordering = ['-id']
 
     def __str__(self):
         title = self.title.name
