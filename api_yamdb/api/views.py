@@ -1,29 +1,26 @@
-# from asyncio.windows_events import NULL
-from django.core.mail import send_mail
+from asyncio.windows_events import NULL
 from django.contrib.auth import get_user_model
-from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth.tokens import default_token_generator
-from rest_framework import (
-    filters, generics, pagination,
-    permissions, status, viewsets
-)
+from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import (filters, generics, pagination, permissions, status,
+                            viewsets)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from reviews.models import Category, Genre, Review, Title
-from django.shortcuts import get_object_or_404
-from .filters import TitleFilter
-from .permissions import IsAdmin, IsAdminOrReadOnly, IsAuthorOrReadOnly, TitlePermission
-from .serializers import (
-    CategorySerializer, GenreSerializer, TitleSerializer, TitleDisplaySerializer,
-    MyTokenObtainPairSerializer, UserSerializer, SignUpSerializer,
-    ReviewSerializer, CommentSerializer
-)
-from .viewsets import (
-    CreateUpdateListRetrieveDeleteViewSet,
-    CreateListDeleteViewSet
-)
 
+from .filters import TitleFilter
+from .permissions import (IsAdmin, IsAdminOrReadOnly, IsAuthorOrReadOnly,
+                          TitlePermission)
+from .serializers import (CategorySerializer, CommentSerializer,
+                          GenreSerializer, MyTokenObtainPairSerializer,
+                          ReviewSerializer, SignUpSerializer,
+                          TitleDisplaySerializer, TitleSerializer,
+                          UserSerializer)
+from .viewsets import (CreateListDeleteViewSet,
+                       CreateUpdateListRetrieveDeleteViewSet)
 
 User = get_user_model()
 
@@ -82,8 +79,10 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def get_object(self):
         queryset = self.get_queryset()
-        obj = get_object_or_404(queryset,
-                                username=self.kwargs['username'])
+        obj = get_object_or_404(
+            queryset,
+            username=self.kwargs['username']
+        )
         return obj
 
 
@@ -94,16 +93,20 @@ class UserSelfDetail(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         queryset = self.get_queryset()
-        obj = get_object_or_404(queryset,
-                                username=self.request.user.username)
+        obj = get_object_or_404(
+            queryset,
+            username=self.request.user.username
+        )
         return obj
 
     def perform_update(self, serializer):
         user_role = self.request.user.role
         request_role = serializer.validated_data.get('role')
-        if (user_role == 'user'
-                and request_role is not NULL
-                and request_role != user_role):
+        if (
+            user_role == 'user'
+            and request_role is not NULL
+            and request_role != user_role
+        ):
             serializer.validated_data['role'] = 'user'
         serializer.save()
 
