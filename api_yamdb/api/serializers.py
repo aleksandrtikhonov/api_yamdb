@@ -5,9 +5,9 @@ from django.contrib.auth.tokens import default_token_generator
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
-from reviews.models import Category, Genre, Title, Review, Comment
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from reviews.models import Category, Comment, Genre, Review, Title
 
 User = get_user_model()
 
@@ -113,12 +113,16 @@ class TitleDisplaySerializer(serializers.ModelSerializer):
         reviews = obj.reviews.all()
         rating = reviews.aggregate(Avg('score'))
         if rating.get('score__avg') is None:
-            return f'У {obj.name} пока нет оценок.'
+            return None
         return rating.get('score__avg')
 
     class Meta:
         model = Title
-        fields = ('id', 'name', 'year', 'rating', 'description', 'genre', 'category')
+        fields = (
+            'id', 'name', 'year',
+            'rating', 'description',
+            'genre', 'category'
+        )
 
 
 class SignUpSerializer(serializers.ModelSerializer):
