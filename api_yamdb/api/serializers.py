@@ -16,7 +16,7 @@ class CategorySerializer(serializers.ModelSerializer):
     Обслуживает модель 'Category'.
     """
     slug = serializers.SlugField(
-        max_length=100,
+        max_length=50,
         validators=[UniqueValidator(
             queryset=Category.objects.all(),
             message='Такая категория уже существует.'
@@ -25,7 +25,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ('name', 'slug')
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -33,7 +33,7 @@ class GenreSerializer(serializers.ModelSerializer):
     Обслуживает модель 'Genre'.
     """
     slug = serializers.SlugField(
-        max_length=100,
+        max_length=50,
         validators=[UniqueValidator(
             queryset=Genre.objects.all(),
             message='Такой жанр уже существует.'
@@ -42,12 +42,33 @@ class GenreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Genre
-        fields = '__all__'
+        fields = ('name', 'slug')
+
+
+class CategoryDisplaySerializer(serializers.ModelSerializer):
+    """
+    Обслуживает модель 'Category'.
+    Используется на чтение внутри 'TitleDisplaySerializer'.
+    """
+    class Meta:
+        model = Category
+        fields = ('name', 'slug')
+
+
+class GenreDisplaySerializer(serializers.ModelSerializer):
+    """
+    Обслуживает модель 'Genre'.
+    Используется на чтение внутри 'TitleDisplaySerializer'.
+    """
+    class Meta:
+        model = Genre
+        fields = ('name', 'slug')
 
 
 class TitleSerializer(serializers.ModelSerializer):
     """
     Обслуживает модель 'Title'.
+    Используется на запись.
     """
     category = serializers.SlugRelatedField(
         queryset=Category.objects.all(),
@@ -76,6 +97,19 @@ class TitleSerializer(serializers.ModelSerializer):
                 fields=('name', 'year', 'category')
             )
         ]
+
+
+class TitleDisplaySerializer(serializers.ModelSerializer):
+    """
+    Обслуживает модель 'Title'.
+    Используется на чтение.
+    """
+    category = CategoryDisplaySerializer(read_only=True)
+    genre = GenreDisplaySerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Title
+        fields = ('id', 'name', 'year', 'description', 'genre', 'category')
 
 
 class SignUpSerializer(serializers.ModelSerializer):
