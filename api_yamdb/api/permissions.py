@@ -37,11 +37,10 @@ class IsAdmin(permissions.BasePermission):
                 or request.user.role == 'admin')
 
 
-class IsAuthorOrReadOnly(permissions.BasePermission):
-    """
-    Доступ на изменение только автору.
-    """
+class IsAuthorOrStaffOrReadOnly(permissions.BasePermission):
+    """Доступ на изменение автору, админу, модератору"""
     def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        return obj.author == request.user or request.user.role == 'moderator'
+        return (request.method in permissions.SAFE_METHODS
+                or obj.author == request.user
+                or request.user.role == 'admin'
+                or request.user.role == 'moderator')

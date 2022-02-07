@@ -142,7 +142,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly,
-        IsAuthorOrReadOnly,
+        IsAuthorOrStaffOrReadOnly,
     )
 
     def get_queryset(self, **kwargs):
@@ -168,7 +168,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly,
-        IsAuthorOrReadOnly
+        IsAuthorOrStaffOrReadOnly,
     )
 
     def get_queryset(self, **kwargs):
