@@ -54,7 +54,7 @@ class IsAdmin(permissions.BasePermission):
                 or request.user.role == 'admin')
 
 
-class IsAuthorOrReadOnly(permissions.IsAuthenticatedOrReadOnly):
+class IsAuthorOrReadOnly(permissions.BasePermission):
     """
     Доступ на изменение только автору.
     """

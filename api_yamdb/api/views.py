@@ -1,11 +1,9 @@
-from asyncio.windows_events import NULL
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import (filters, generics, pagination, permissions, status,
-                            viewsets)
+from rest_framework import filters, generics, permissions, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -19,8 +17,7 @@ from .serializers import (CategorySerializer, CommentSerializer,
                           ReviewSerializer, SignUpSerializer,
                           TitleDisplaySerializer, TitleSerializer,
                           UserSerializer)
-from .viewsets import (CreateListDeleteViewSet,
-                       CreateUpdateListRetrieveDeleteViewSet)
+from .viewsets import CreateListDeleteViewSet
 
 User = get_user_model()
 
@@ -33,7 +30,6 @@ class CategoryViewSet(CreateListDeleteViewSet):
     lookup_field = 'slug'
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
-    pagination_class = pagination.PageNumberPagination
 
 
 class GenreViewSet(CreateListDeleteViewSet):
@@ -44,7 +40,6 @@ class GenreViewSet(CreateListDeleteViewSet):
     lookup_field = 'slug'
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
-    pagination_class = pagination.PageNumberPagination
 
 
 class TitleViewSet(viewsets.ModelViewSet):
@@ -53,7 +48,6 @@ class TitleViewSet(viewsets.ModelViewSet):
     permission_classes = (TitlePermission,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
-    pagination_class = pagination.PageNumberPagination
 
     def get_serializer_class(self):
         if self.action in ('retrieve', 'list'):
@@ -68,7 +62,6 @@ class UserList(generics.ListCreateAPIView):
     permission_classes = (IsAdmin,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
-    pagination_class = pagination.PageNumberPagination
 
 
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -104,7 +97,7 @@ class UserSelfDetail(generics.RetrieveUpdateAPIView):
         request_role = serializer.validated_data.get('role')
         if (
             user_role == 'user'
-            and request_role is not NULL
+            and request_role is not None
             and request_role != user_role
         ):
             serializer.validated_data['role'] = 'user'
@@ -143,14 +136,13 @@ def send_token(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ReviewViewSet(CreateUpdateListRetrieveDeleteViewSet):
+class ReviewViewSet(viewsets.ModelViewSet):
     """Обработка запросов к отзывам"""
     serializer_class = ReviewSerializer
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly,
-        IsAuthorOrReadOnly
+        IsAuthorOrReadOnly,
     )
-    pagination_class = pagination.PageNumberPagination
 
     def get_queryset(self, **kwargs):
         title = get_object_or_404(
@@ -170,14 +162,13 @@ class ReviewViewSet(CreateUpdateListRetrieveDeleteViewSet):
         )
 
 
-class CommentViewSet(CreateUpdateListRetrieveDeleteViewSet):
+class CommentViewSet(viewsets.ModelViewSet):
     """Обработка запросов к комментариям на произведения"""
     serializer_class = CommentSerializer
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly,
         IsAuthorOrReadOnly
     )
-    pagination_class = pagination.PageNumberPagination
 
     def get_queryset(self, **kwargs):
         review = get_object_or_404(
