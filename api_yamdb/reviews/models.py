@@ -22,6 +22,9 @@ class User(AbstractUser):
     )
     bio = models.TextField('О себе', blank=True)
 
+    class Meta:
+        ordering = ['-id']
+
 
 def current_year():
     """
