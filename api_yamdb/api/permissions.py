@@ -1,9 +1,11 @@
 from rest_framework import permissions
 
 
-class TitlePermission(permissions.BasePermission):
+class IsAdminOrReadOnlyPermission(permissions.BasePermission):
     """
-    Кастмоный пермишен для Title.
+    Кастмоный пермишен для Category, Genre, Title.
+    POST/DELETE запросы доступны только администратору и суперюзеру.
+    PUT запрос запрещен.
     """
     def has_permission(self, request, view):
         if request.user.is_anonymous:
@@ -18,25 +20,6 @@ class TitlePermission(permissions.BasePermission):
             return False
         if request.user.is_anonymous:
             return request.method in permissions.SAFE_METHODS
-        return (
-            request.user.is_superuser
-            or request.user.role == 'admin'
-        )
-
-
-class IsAdminOrReadOnly(permissions.BasePermission):
-    """
-    POST/DELETE запросы доступны только администратору либо суперюзеру.
-    """
-    def has_permission(self, request, view):
-        if request.user.is_anonymous:
-            return request.method in permissions.SAFE_METHODS
-        return (
-            request.user.is_superuser
-            or request.user.role == 'admin'
-        )
-
-    def has_object_permission(self, request, view, obj):
         return (
             request.user.is_superuser
             or request.user.role == 'admin'
