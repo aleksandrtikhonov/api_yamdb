@@ -10,8 +10,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from reviews.models import Category, Genre, Review, Title
 
 from .filters import TitleFilter
-from .permissions import (IsAdmin, IsAdminOrReadOnly,
-                          IsAuthorOrStaffOrReadOnly, TitlePermission)
+from .permissions import IsAdmin, IsAdminOrReadOnly, IsAuthorOrStaffOrReadOnly
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, MyTokenObtainPairSerializer,
                           ReviewSerializer, SignUpSerializer,
@@ -45,7 +44,7 @@ class GenreViewSet(CreateListDeleteViewSet):
 class TitleViewSet(viewsets.ModelViewSet):
     """Обработка запросов к произведениям."""
     queryset = Title.objects.all()
-    permission_classes = (TitlePermission,)
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
 
@@ -122,8 +121,9 @@ def send_token(request):
             # Создадим пользователя
             serializer.save()
             # Отправим письмо с кодом подтверждения
-            user = get_object_or_404(User,
-                                     username=serializer.data['username'])
+            user = get_object_or_404(
+                User,
+                username=serializer.data['username'])
             confirmation_code = default_token_generator.make_token(user)
             send_mail(
                 'Подтверждение регистрации пользователя',

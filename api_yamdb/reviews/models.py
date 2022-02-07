@@ -6,10 +6,7 @@ from django.db import models
 
 
 class User(AbstractUser):
-    """
-    Новая модель пользователя.
-    Добавлены роли и графа О себе.
-    """
+    """Модель пользователя."""
     USER_ROLES = [
         ('user', 'Аутентифицированный пользователь'),
         ('moderator', 'Модератор'),
@@ -27,9 +24,7 @@ class User(AbstractUser):
 
 
 def current_year():
-    """
-    Получаем текущий год.
-    """
+    """Получаем текущий год."""
     return dt.date.today().year
 
 
