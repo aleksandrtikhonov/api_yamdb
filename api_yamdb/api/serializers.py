@@ -112,8 +112,6 @@ class TitleDisplaySerializer(serializers.ModelSerializer):
     def get_rating(self, obj):
         reviews = obj.reviews.all()
         rating = reviews.aggregate(Avg('score'))
-        if rating.get('score__avg') is None:
-            return None
         return rating.get('score__avg')
 
     class Meta:
@@ -181,10 +179,13 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     def validate(self, attrs):
         user = get_object_or_404(User, username=attrs['username'])
-        if not default_token_generator.check_token(user,
-                                                   attrs['confirmation_code']):
+        if not default_token_generator.check_token(
+            user,
+            attrs['confirmation_code']
+        ):
             raise serializers.ValidationError(
-                'Неверный код подтверждения!')
+                'Неверный код подтверждения!'
+            )
 
         refresh = self.get_token(user)
         data = {'token': str(refresh.access_token), }
@@ -213,8 +214,10 @@ class ReviewSerializer(serializers.ModelSerializer):
             id=self.context.get('view').kwargs.get('title_id')
         )
         if (self.context.get('request').method == 'POST'
-            and Review.objects.filter(title_id=title_id,
-                                      author_id=author.id).exists()):
+            and Review.objects.filter(
+                title_id=title_id,
+                author_id=author.id
+                ).exists()):
             raise serializers.ValidationError('fdfasfsaf')
         return data
 
