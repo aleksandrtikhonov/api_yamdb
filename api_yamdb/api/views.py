@@ -25,7 +25,7 @@ class CategoryViewSet(CreateListDeleteViewSet):
     """Обработка запросов к категориям."""
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = (IsAdminOrReadOnlyPermission,)
+    permission_classes = (IsAdminOrReadOnly,)
     lookup_field = 'slug'
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
@@ -35,7 +35,7 @@ class GenreViewSet(CreateListDeleteViewSet):
     """Обработка запросов к жанрам."""
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (IsAdminOrReadOnlyPermission,)
+    permission_classes = (IsAdminOrReadOnly,)
     lookup_field = 'slug'
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
