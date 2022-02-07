@@ -10,8 +10,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from reviews.models import Category, Genre, Review, Title
 
 from .filters import TitleFilter
-from .permissions import (IsAdmin, IsAdminOrReadOnly, IsAuthorOrReadOnly,
-                          TitlePermission)
+from .permissions import (IsAdmin, IsAdminOrReadOnly,
+                          IsAuthorOrStaffOrReadOnly, TitlePermission)
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, MyTokenObtainPairSerializer,
                           ReviewSerializer, SignUpSerializer,
@@ -141,7 +141,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly,
-        IsAuthorOrReadOnly,
+        IsAuthorOrStaffOrReadOnly,
     )
 
     def get_queryset(self, **kwargs):
@@ -167,7 +167,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly,
-        IsAuthorOrReadOnly
+        IsAuthorOrStaffOrReadOnly,
     )
 
     def get_queryset(self, **kwargs):
