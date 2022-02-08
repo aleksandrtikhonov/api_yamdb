@@ -4,6 +4,7 @@ from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Avg
+
 from rest_framework import filters, generics, permissions, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -27,20 +28,12 @@ class CategoryViewSet(CreateListDeleteViewSet):
     """Обработка запросов к категориям."""
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = (IsAdminOrReadOnly,)
-    lookup_field = 'slug'
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('name',)
 
 
 class GenreViewSet(CreateListDeleteViewSet):
     """Обработка запросов к жанрам."""
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (IsAdminOrReadOnly,)
-    lookup_field = 'slug'
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('name',)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
@@ -107,6 +100,7 @@ class UserSelfDetail(generics.RetrieveUpdateAPIView):
 
 class MyTokenObtainPairView(TokenObtainPairView):
     """Обработка запросов токенов."""
+
     serializer_class = MyTokenObtainPairSerializer
     permission_classes = (permissions.AllowAny,)
 
