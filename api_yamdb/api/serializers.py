@@ -2,11 +2,11 @@ import datetime as dt
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
-from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 from reviews.models import Category, Comment, Genre, Review, Title
 
 User = get_user_model()
@@ -83,7 +83,7 @@ class TitleSerializer(serializers.ModelSerializer):
 
     def validate_year(self, value):
         current_year = dt.date.today().year
-        if 0 < value < current_year:
+        if 0 < value <= current_year:
             return value
         raise serializers.ValidationError(
             'Проверьте год выхода'
@@ -107,12 +107,7 @@ class TitleDisplaySerializer(serializers.ModelSerializer):
     """
     category = CategoryDisplaySerializer(read_only=True)
     genre = GenreDisplaySerializer(read_only=True, many=True)
-    rating = serializers.SerializerMethodField(read_only=True)
-
-    def get_rating(self, obj):
-        reviews = obj.reviews.all()
-        rating = reviews.aggregate(Avg('score'))
-        return rating.get('score__avg')
+    rating = serializers.FloatField(read_only=True)
 
     class Meta:
         model = Title
