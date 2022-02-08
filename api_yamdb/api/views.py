@@ -9,6 +9,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from api_yamdb.settings import EMAIL_HOST_USER
 from reviews.models import Category, Genre, Review, Title
 from .filters import TitleFilter
 from .permissions import IsAdmin, IsAdminOrReadOnly, IsAuthorOrStaffOrReadOnly
@@ -18,7 +19,6 @@ from .serializers import (CategorySerializer, CommentSerializer,
                           TitleDisplaySerializer, TitleSerializer,
                           UserSerializer)
 from .viewsets import CreateListDeleteViewSet
-from api_yamdb.settings import EMAIL_HOST_USER
 
 User = get_user_model()
 
@@ -110,6 +110,24 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
     permission_classes = (permissions.AllowAny,)
 
+    def post(self, request, *args, **kwargs):
+        serializer = MyTokenObtainPairSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = get_object_or_404(
+            User,
+            username=serializer.initial_data['username']
+        )
+        if not default_token_generator.check_token(
+            user,
+            serializer.initial_data['confirmation_code']
+        ):
+            return Response(
+                {'confirmation_code': 'Неверный код подтверждения.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
 
 @api_view(['POST', ])
 @permission_classes((permissions.AllowAny, ))
@@ -122,12 +140,14 @@ def send_token(request):
 
     serializer = SignUpSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    # Создадим пользователя
-    serializer.save()
+
+    # Создадим пользователя, если такого нет
+    user_obj, created = User.objects.get_or_create(
+        username=serializer.data['username'],
+        email=serializer.data['email'],
+    )
     # Отправим письмо с кодом подтверждения
-    user = get_object_or_404(User,
-                             username=serializer.data['username'])
-    confirmation_code = default_token_generator.make_token(user)
+    confirmation_code = default_token_generator.make_token(user_obj)
     send_mail(
         'Подтверждение регистрации пользователя',
         f'Код подтверждения: {confirmation_code}',
