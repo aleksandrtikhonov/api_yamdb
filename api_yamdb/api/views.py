@@ -9,6 +9,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from api_yamdb.settings import EMAIL_HOST_USER
 from reviews.models import Category, Genre, Review, Title
 from .filters import TitleFilter
 from .permissions import IsAdmin, IsAdminOrReadOnly, IsAuthorOrStaffOrReadOnly
@@ -18,7 +19,6 @@ from .serializers import (CategorySerializer, CommentSerializer,
                           TitleDisplaySerializer, TitleSerializer,
                           UserSerializer)
 from .viewsets import CreateListDeleteViewSet
-from api_yamdb.settings import EMAIL_HOST_USER
 
 User = get_user_model()
 
