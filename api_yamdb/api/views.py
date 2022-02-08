@@ -87,12 +87,11 @@ class UserSelfDetail(generics.RetrieveUpdateAPIView):
         return obj
 
     def perform_update(self, serializer):
-        user_role = self.request.user.role
         request_role = serializer.validated_data.get('role')
         if (
-            user_role == 'user'
+            self.request.user.is_user
             and request_role is not None
-            and request_role != user_role
+            and request_role != self.request.user.role
         ):
             serializer.validated_data['role'] = 'user'
         serializer.save()
