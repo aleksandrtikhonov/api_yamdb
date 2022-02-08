@@ -3,6 +3,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Avg
 from rest_framework import filters, generics, permissions, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -40,7 +41,6 @@ class GenreViewSet(CreateListDeleteViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
 
-from django.db.models import Avg
 
 class TitleViewSet(viewsets.ModelViewSet):
     """Обработка запросов к произведениям."""
