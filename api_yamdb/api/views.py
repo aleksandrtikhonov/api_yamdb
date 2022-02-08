@@ -17,6 +17,7 @@ from .serializers import (CategorySerializer, CommentSerializer,
                           TitleDisplaySerializer, TitleSerializer,
                           UserSerializer)
 from .viewsets import CreateListDeleteViewSet
+from api_yamdb.settings import EMAIL_HOST_USER
 
 User = get_user_model()
 
@@ -115,25 +116,25 @@ def send_token(request):
     """
     Отправка кода подтверждения по почте.
     """
-    if request.method == 'POST':
-        serializer = SignUpSerializer(data=request.data)
-        if serializer.is_valid():
-            # Создадим пользователя
-            serializer.save()
-            # Отправим письмо с кодом подтверждения
-            user = get_object_or_404(
-                User,
-                username=serializer.data['username'])
-            confirmation_code = default_token_generator.make_token(user)
-            send_mail(
-                'Подтверждение регистрации пользователя',
-                f'Код подтверждения: {confirmation_code}',
-                'from@example.com',  # "От кого"
-                [serializer.data['email']],  # "Кому"
-                fail_silently=False,
-            )
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    if request.method != 'POST':
+        return
+
+    serializer = SignUpSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    # Создадим пользователя
+    serializer.save()
+    # Отправим письмо с кодом подтверждения
+    user = get_object_or_404(User,
+                             username=serializer.data['username'])
+    confirmation_code = default_token_generator.make_token(user)
+    send_mail(
+        'Подтверждение регистрации пользователя',
+        f'Код подтверждения: {confirmation_code}',
+        EMAIL_HOST_USER,
+        [serializer.data['email']],
+        fail_silently=False,
+    )
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):

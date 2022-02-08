@@ -22,6 +22,18 @@ class User(AbstractUser):
     class Meta:
         ordering = ['-id']
 
+    @property
+    def is_admin_or_superuser(self):
+        return (self.is_superuser or self.role == 'admin')
+
+    @property
+    def is_moderator(self):
+        return self.role == 'moderator'
+
+    @property
+    def is_user(self):
+        return self.role == 'user'
+
 
 def current_year():
     """Получаем текущий год."""
