@@ -120,7 +120,8 @@ class TitleDisplaySerializer(serializers.ModelSerializer):
 
 class SignUpSerializer(serializers.Serializer):
     """
-    Создает пользователей через API.
+    Создает пользователей через API,
+    отправляет код подтверждения на эл.почту.
     """
     username = serializers.CharField(
         max_length=150,
@@ -153,6 +154,8 @@ class SignUpSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     """
     Обслуживает модель 'User'.
+    Применяется для создания пользователей администратором
+    и получения/корректировки данных пользователями.
     """
     username = serializers.CharField(
         allow_blank=False,
