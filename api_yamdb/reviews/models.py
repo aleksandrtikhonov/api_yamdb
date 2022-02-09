@@ -5,12 +5,18 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 
+class UserRole:
+    USER = 'user'
+    MODERATOR = 'moderator'
+    ADMIN = 'admin'
+
+
 class User(AbstractUser):
     """Модель пользователя."""
     USER_ROLES = [
-        ('user', 'Аутентифицированный пользователь'),
-        ('moderator', 'Модератор'),
-        ('admin', 'Администратор'),
+        (UserRole.USER, 'Аутентифицированный пользователь'),
+        (UserRole.MODERATOR, 'Модератор'),
+        (UserRole.ADMIN, 'Администратор'),
     ]
     role = models.CharField(
         max_length=9,
@@ -24,15 +30,15 @@ class User(AbstractUser):
 
     @property
     def is_admin_or_superuser(self):
-        return (self.is_superuser or self.role == 'admin')
+        return (self.is_superuser or self.role == UserRole.ADMIN)
 
     @property
     def is_moderator(self):
-        return self.role == 'moderator'
+        return self.role == UserRole.MODERATOR
 
     @property
     def is_user(self):
-        return self.role == 'user'
+        return self.role == UserRole.USER
 
 
 def current_year():
