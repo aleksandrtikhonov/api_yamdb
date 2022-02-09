@@ -1,8 +1,8 @@
-import datetime as dt
-
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
+from .utils import max_value_current_year
 
 
 class UserRole:
@@ -39,19 +39,6 @@ class User(AbstractUser):
     @property
     def is_user(self):
         return self.role == UserRole.USER
-
-
-def current_year():
-    """Получаем текущий год."""
-    return dt.date.today().year
-
-
-def max_value_current_year(value):
-    """
-    Подставляем в валидатор текущий год,
-    для валидации максимального значения поля.
-    """
-    return MaxValueValidator(current_year())(value)
 
 
 class Category(models.Model):
@@ -121,7 +108,7 @@ class Title(models.Model):
     )
     genre = models.ManyToManyField(
         Genre,
-        through='Genre_Title'
+        through='GenreTitle'
     )
     description = models.TextField(blank=True)
 
@@ -129,7 +116,7 @@ class Title(models.Model):
         return self.name
 
 
-class Genre_Title(models.Model):
+class GenreTitle(models.Model):
     """
     Связка произведение-жанр.
     """
