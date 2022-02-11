@@ -1,7 +1,7 @@
 import datetime as dt
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.tokens import default_token_generator
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
@@ -118,22 +118,32 @@ class TitleDisplaySerializer(serializers.ModelSerializer):
         )
 
 
-class SignUpSerializer(serializers.ModelSerializer):
+class SignUpSerializer(serializers.Serializer):
     """
-    Создает пользователей через API.
+    Создает пользователей через API,
+    отправляет код подтверждения на эл.почту.
     """
     username = serializers.CharField(
+        max_length=150,
         allow_blank=False,
-        validators=[UniqueValidator(queryset=User.objects.all())]
     )
     email = serializers.EmailField(
+        max_length=254,
         allow_blank=False,
-        validators=[UniqueValidator(queryset=User.objects.all())]
     )
 
-    class Meta:
-        model = User
-        fields = ('email', 'username')
+    def validate(self, data):
+        data_username = data['username']
+        data_email = data['email']
+        user_q = User.objects.filter(
+            (Q(email=data_email) & ~Q(username=data_username))
+            | (~Q(email=data_email) & Q(username=data_username))
+        )
+        if user_q:
+            raise serializers.ValidationError(
+                'В базе уже есть пользователь с указанным username или email'
+            )
+        return data
 
     def validate_username(self, value):
         if value == 'me':
@@ -144,6 +154,8 @@ class SignUpSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     """
     Обслуживает модель 'User'.
+    Применяется для создания пользователей администратором
+    и получения/корректировки данных пользователями.
     """
     username = serializers.CharField(
         allow_blank=False,
@@ -174,14 +186,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     def validate(self, attrs):
         user = get_object_or_404(User, username=attrs['username'])
-        if not default_token_generator.check_token(
-            user,
-            attrs['confirmation_code']
-        ):
-            raise serializers.ValidationError(
-                'Неверный код подтверждения!'
-            )
-
         refresh = self.get_token(user)
         data = {'token': str(refresh.access_token), }
 
